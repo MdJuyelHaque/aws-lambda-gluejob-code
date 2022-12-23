@@ -54,4 +54,3 @@ s3fs==2021.8.1
 watchdog==2.1.2
 websocket-client==1.2.1
 Werkzeug==1.0.1
-py-infusionsoft @ git+https://github.com/infusionsoft/Official-API-Python-Library.git@e1841bcc98ac4fdbe8f07c1023e1a67108f0d4fa
