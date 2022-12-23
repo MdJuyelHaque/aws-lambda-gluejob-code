@@ -8,10 +8,10 @@ Glue:
   tempDirBucket: s3://bti-glue-job #s3 bucket path
   jobs:
     - name: bti-InfusionSoft-HO-Aurora-Staging-Publish-Set1-dly-app # Required
-      scriptPath: s3://bti-glue-job/bti-InfusionSoft-HO-Aurora-Staging-Publish-Set1-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
+      scriptPath: s3://bti-glue-job/InfusionSoft-HO-Aurora-Staging-Publish-Set1-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
       type: pythonshell #spark / pythonshell # Required
       glueVersion: python3-1.0 #python3-2.0 # Required python3-1.0 | python3-2.0 | python2-1.0 | python2-0.9 | scala2-1.0 | scala2-0.9 | scala2-2.0
-      role: arn:aws:iam::004181835165:role/bti-glue-aurora-publish-role #Required Role ARN
+      role: arn:aws:iam:::role/bti-glue-aurora-publish-role #Required Role ARN
       MaxConcurrentRuns: 3 # Optional
       WorkerType: Standard # Optional  | Standard  | G1.X | G2.X
       NumberOfWorkers: 1 # Optional
