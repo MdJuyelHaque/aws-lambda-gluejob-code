@@ -1,0 +1,52 @@
+service: bti-InfusionSoft-IT-Aurora-Staging-Publish-Set2-dly-app
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+Glue:
+  bucketDeploy: bti-glue-job #bucketname 
+  tempDirBucket: s3://bti-glue-job #s3 bucket path
+  jobs:
+    - name: bti-InfusionSoft-IT-Aurora-Staging-Publish-Set2-dly-app # Required
+      scriptPath: s3://bti-glue-job/bti-InfusionSoft-IT-Aurora-Staging-Publish-Set2-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
+      type: pythonshell #spark / pythonshell # Required
+      glueVersion: python3-1.0 #python3-2.0 # Required python3-1.0 | python3-2.0 | python2-1.0 | python2-0.9 | scala2-1.0 | scala2-0.9 | scala2-2.0
+      role: arn:aws:iam::004181835165:role/bti-glue-aurora-publish-role #Required Role ARN
+      MaxConcurrentRuns: 3 # Optional
+      WorkerType: Standard # Optional  | Standard  | G1.X | G2.X
+      NumberOfWorkers: 1 # Optional
+      Connections: # Optional
+        - bti_publish_read_write 
+        - bti_staging_read_write 
+        - s3_access
+      DefaultArguments: # Optional
+        customArguments:
+         "--database": "bti_it_staging"
+         "--Cntry_target_table": "bti_it_publish.countries"
+         "--Mer_source__table": "bti_it_staging.merchants"
+         "--job_name": "bti-InfusionSoft-IT-Aurora-Staging-Publish-Set2-dly-app"
+         "--Prod_target_table": "bti_it_publish.products"
+         "--File_target_table": "bti_it_publish.files"
+         "--Ord_target_table": "bti_it_publish.orders"
+         "--Prod_source_table": "bti_it_staging.products"
+         "--User_source_table": "bti_it_staging.userInfo"
+         "--python-modules-installer-option" "--no-index --find-links=http://bti-glue-job.s3-website-us-west-2.amazonaws.com/wheelhouse1 --trusted-host bti-glue-job.s3-website-us-west-2.amazonaws.com"
+         "--Opp_target_table": "bti_it_publish.opportunities"
+         "--port": "3306"
+         "--Tags_target_table": "bti_it_publish.tags"
+         "--Ord_source_table":  "bti_it_staging.orders"
+         "--Cont_source_table": "bti_it_staging.contacts"
+         "--Cont_target_table": "bti_it_publish.contacts_new1"
+         "--Trans_target_table": "bti_it_publish.transactions"
+         "--User_target_table": "bti_it_publish.userInfo"
+         "--Tags_source_table": "bti_it_staging.tags"
+         "--File_source_table": "bti_it_staging.files"
+         "--Mer_target_table": "bti_it_publish.merchants"
+         "--Sub_target_table": "bti_it_publish.subscriptions"
+         "--Trans_source_table": "bti_it_staging.transactions"
+         "--Cntry_source_table": "bti_it_staging.countries"
+         "--Sub_source_table": "bti_it_staging.subscriptions"
+         "--Opp_source_table": "bti_it_staging.opportunities"
+          # Optional; these are user-specified custom default arguments that are passed into cloudformation with a leading -- (required for glue)
+plugins:
+  - serverless-glue

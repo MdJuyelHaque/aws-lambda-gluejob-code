@@ -1,0 +1,65 @@
+service: bti-Google-Sheets-Aurora-Staging-Publish-Set2-dly-app
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+Glue:
+  bucketDeploy: bti-glue-job #bucketname 
+  tempDirBucket: s3://bti-glue-job #s3 bucket path
+  jobs:
+    - name: bti-Google-Sheets-Aurora-Staging-Publish-Set2-dly-app # Required
+      scriptPath: s3://bti-glue-job/bti-Google-Sheets-Aurora-Staging-Publish-Set2-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
+      type: pythonshell #spark / pythonshell # Required
+      glueVersion: python3-1.0 #python3-2.0 # Required python3-1.0 | python3-2.0 | python2-1.0 | python2-0.9 | scala2-1.0 | scala2-0.9 | scala2-2.0
+      role: arn:aws:iam::004181835165:role/bti-glue-aurora-publish-role #Required Role ARN
+      MaxConcurrentRuns: 3 # Optional
+      WorkerType: Standard # Optional  | Standard  | G1.X | G2.X
+      NumberOfWorkers: 1 # Optional
+      Connections: # Optional
+        - bti_publish_read_write 
+        - bti_staging_read_write 
+        - s3_access
+      DefaultArguments: # Optional
+        customArguments:
+         "--database": "bti_others_staging"
+         "--job_name": "bti-Google-Sheets-Aurora-Staging-Publish-Set2-dly-app"
+         "--python-modules-installer-option": "--no-index --find-links=http://bti-glue-job.s3-website-us-west-2.amazonaws.com/wheelhouse1 --trusted-host bti-glue-job.s3-website-us-west-2.amazonaws.com"
+         "--port": "3306"
+         "--additional-python-modules": "mysql.connector"
+         "--Funnel_G_Source_table": "bti_others_staging.Funnel_Goals"
+         "--Dec_source_table": "bti_others_staging.DEC_Goals" 
+         "--ETN_Source_table": "bti_others_staging.Enrollment_Team_Names"
+         "--RPG_target_table": "bti_others_publish.Referral_Partner_Goals"
+         "--IHG_Source_table": "bti_others_staging.InHouse_Goals"
+         "--Dec_target_table": "bti_others_publish.DEC_Goals"
+         "--PSS_target_table": "bti_others_publish.PAD_SS_Set"
+         "--CPF_Source_table": "bti_others_staging.Campaign_Performance_Funnels"
+         "--FSL_target_table": "bti_others_publish.Funnel_Status_Lookup"
+         "--RPL_Source_table": "bti_others_staging.Referral_Partner_Lookup"
+         "--PG_Source_table": "bti_others_staging.PAD_Goals"
+         "--FG_target_table": "bti_others_publish.FrontLine_Goals"
+         "--PG_target_table": "bti_others_publish.PAD_Goals"
+         "--FSS_source_table": "bti_others_staging.FrontLine_SS_Set"
+         "--LSDL_Source_table": "bti_others_staging.Lead_Source_Data_Lookup"
+         "--energy_source_table": "bti_others_staging.2021_Energy_Board"
+         "--PC_Source_table": "bti_others_staging.Products_Categories"
+         "--PEG_Source_table": "bti_others_staging.PE_Goals"
+         "--FSL_Source_table": "bti_others_staging.Funnel_Status_Lookup"
+         "--RPL_target_table": "bti_others_publish.Referral_Partner_Lookup"
+         "--RPG_Source_table": "bti_others_staging.Referral_Partner_Goals"
+         "--FG_source_table": "bti_others_staging.FrontLine_Goals"
+         "--FSS_target_table": "bti_others_publish.FrontLine_SS_Set"
+         "--IHSS_target_table": "bti_others_publish.InHouse_SS_Set"
+         "--IHSS_Source_table": "bti_others_staging.InHouse_SS_Set"
+         "--PEG_target_table": "bti_others_publish.PE_Goals"
+         "--LSDL_target_table": "bti_others_publish.Lead_Source_Data_Lookup"
+         "--PC_target_table": "bti_others_publish.Products_Categories"
+         "--PSS_Source_table": "bti_others_staging.PAD_SS_Set"
+         "--CPF_target_table": "bti_others_publish.Campaign_Performance_Funnels"
+         "--energy_target_table": "bti_others_publish.2021_Energy_Board"
+         "--IHG_target_table": "bti_others_publish.InHouse_Goals"
+         "--ETN_target_table": "bti_others_publish.Enrollment_Team_Names"
+         "--Funnel_G_target_table": "bti_others_publish.Funnel_Goals"
+          # Optional; these are user-specified custom default arguments that are passed into cloudformation with a leading -- (required for glue)
+plugins:
+  - serverless-glue

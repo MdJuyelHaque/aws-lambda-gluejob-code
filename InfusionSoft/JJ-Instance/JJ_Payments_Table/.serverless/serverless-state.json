@@ -1,0 +1,226 @@
+{
+  "service": {
+    "service": "bti-JJ-payments-T",
+    "serviceObject": {
+      "name": "bti-JJ-payments-T"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.8",
+      "region": "us-west-2",
+      "stage": "Test-dly",
+      "deploymentBucket": "bti-production-deployemnt",
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:*"
+          ],
+          "Resource": [
+            "arn:aws:s3:::dummy-bti-dl",
+            "arn:aws:s3:::dummy-bti-dl/*"
+          ]
+        }
+      ],
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "AppLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/bti-JJ-payments-T-Test-dly-app"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "bti-JJ-payments-T",
+                        "Test-dly",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-JJ-payments-T-Test-dly*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-JJ-payments-T-Test-dly*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "bti-JJ-payments-T",
+                    "Test-dly",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "AppLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "bti-production-deployemnt",
+                "S3Key": "serverless/bti-JJ-payments-T/Test-dly/1648112035033-2022-03-24T08:53:55.033Z/bti-JJ-payments-T.zip"
+              },
+              "Handler": "app.handler_zu",
+              "Runtime": "python3.8",
+              "FunctionName": "bti-JJ-payments-T-Test-dly-app",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "BUCKET": "dummy-bti-dl",
+                  "STAGING_FOLDER": "staging",
+                  "PUBLISH_FOLDER": "publish",
+                  "PUBLISH_ARCHIVE_FOLDER": "publish_archive",
+                  "STAGING_PREFIX": "bti_infusionSoft/staging/payments/",
+                  "PUBLISH_PREFIX": "bti_infusionSoft/publish/payments/"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "AppLogGroup"
+            ]
+          },
+          "AppLambdaVersionKdU1iKuj8CNGbU4IDYQXwOudXsQZuy2nvHImRNIQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AppLambdaFunction"
+              },
+              "CodeSha256": "aRlBUzYheMQ3WBz9MGRESJVhH7oAfX3bIBgOGVVbqVU="
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "bti-production-deployemnt",
+            "Export": {
+              "Name": "sls-bti-JJ-payments-T-Test-dly-ServerlessDeploymentBucketName"
+            }
+          },
+          "AppLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AppLambdaVersionKdU1iKuj8CNGbU4IDYQXwOudXsQZuy2nvHImRNIQ"
+            },
+            "Export": {
+              "Name": "sls-bti-JJ-payments-T-Test-dly-AppLambdaFunctionQualifiedArn"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "plugins": [
+      "serverless-python-requirements"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "app": {
+        "handler": "app.handler_zu",
+        "environment": {
+          "BUCKET": "dummy-bti-dl",
+          "STAGING_FOLDER": "staging",
+          "PUBLISH_FOLDER": "publish",
+          "PUBLISH_ARCHIVE_FOLDER": "publish_archive",
+          "STAGING_PREFIX": "bti_infusionSoft/staging/payments/",
+          "PUBLISH_PREFIX": "bti_infusionSoft/publish/payments/"
+        },
+        "events": [],
+        "name": "bti-JJ-payments-T-Test-dly-app",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "AppLambdaVersionKdU1iKuj8CNGbU4IDYQXwOudXsQZuy2nvHImRNIQ"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yml",
+    "initialServerlessConfig": {
+      "service": "bti-JJ-payments-T",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "plugins": {
+        "$ref": "$[\"service\"][\"plugins\"]"
+      }
+    },
+    "layers": {},
+    "artifact": "/home/isita/Desktop/ThirdEye1/zu_test_T/.serverless/bti-JJ-payments-T.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/bti-JJ-payments-T/Test-dly/1648112035033-2022-03-24T08:53:55.033Z",
+    "artifact": "bti-JJ-payments-T.zip"
+  }
+}

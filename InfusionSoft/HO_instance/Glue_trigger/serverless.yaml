@@ -1,0 +1,18 @@
+service: bti-InfusionSoft-HO
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: glue_trigger-dly-app
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    # Allow to put files in the `bti-dl-ho` S3 bucket
+functions:
+  app:
+    handler: app.lambda_handler
+    environment:
+      Gluejobname: bti-InfusionSoft-IT-Aurora-Staging-Publish-Set1-dly-app
+      Gluejobname1: bti-InfusionSoft-HO-Aurora-Staging-Publish-Set2-dly-app
+plugins:
+  - serverless-python-requirements
+

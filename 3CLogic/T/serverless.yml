@@ -1,0 +1,27 @@
+service: bti
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: 3CLogic-T-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl"
+        - "arn:aws:s3:::bti-dl/*"
+
+functions:
+  app:
+    handler: app.staging_to_publish
+    environment:
+      S3_BUCKET: 
+      S3_STAGING_FOLDER: 
+      S3_PUBLISH_FOLDER: 
+      S3_PUBLISH_ARCHIVE_FOLDER: 
+
+plugins:
+  - serverless-python-requirements

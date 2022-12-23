@@ -1,0 +1,25 @@
+service: bti-InfusionSoft-HO-Ref
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: Token-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    # Allow to list, get and put and a file in the `conf-token` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::conf-token/*"
+functions:
+  app:
+    handler: app.refresh_token_ho
+    environment:
+      BUCKET: conf-token
+      encryption_secret_key: 
+      client_id: 
+      client_secret: 
+    
+plugins:
+  - serverless-python-requirements

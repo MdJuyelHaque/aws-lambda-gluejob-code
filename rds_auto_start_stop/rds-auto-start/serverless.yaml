@@ -1,0 +1,16 @@
+service: bti-rds-auto-start
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: dly
+  deploymentBucket: bti-production-deployemnt
+functions:
+  app:
+    handler: app.lambda_handler
+    environment:
+      KEY: Environment
+      REGION: us-west-2 
+      VALUE: dev
+plugins:
+  - serverless-python-requirements

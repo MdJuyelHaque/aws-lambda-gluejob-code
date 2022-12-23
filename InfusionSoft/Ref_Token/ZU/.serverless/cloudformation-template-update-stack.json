@@ -1,0 +1,155 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "AppLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/bti-InfusionSoft-ZU-Ref-Token-dly-app"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "bti-InfusionSoft-ZU-Ref",
+                  "Token-dly",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-InfusionSoft-ZU-Ref-Token-dly*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-InfusionSoft-ZU-Ref-Token-dly*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject"
+                  ],
+                  "Resource": "arn:aws:s3:::conf-token/*"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "bti-InfusionSoft-ZU-Ref",
+              "Token-dly",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "AppLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "bti-production-deployemnt",
+          "S3Key": "serverless/bti-InfusionSoft-ZU-Ref/Token-dly/1650439346249-2022-04-20T07:22:26.249Z/bti-InfusionSoft-ZU-Ref.zip"
+        },
+        "Handler": "app.refresh_token_zu",
+        "Runtime": "python3.8",
+        "FunctionName": "bti-InfusionSoft-ZU-Ref-Token-dly-app",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "BUCKET": "conf-token",
+            "encryption_secret_key": "rGaEopGTmrumXrCPH8Uv-PVZwvPPx4vTv6ugiS-5dGc=",
+            "client_id": "gjM3wrpWjAFC2SnyZ9ADqtXggcHRgt0i",
+            "client_secret": "UNaPKiBjFl5UxOvf"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "AppLogGroup"
+      ]
+    },
+    "AppLambdaVersionR4jg9BLtYp4QTuJjbvtXpFJJrpdxlClvQSaP31Q": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AppLambdaFunction"
+        },
+        "CodeSha256": "EEXIsDcmY6waJXQUPNQwd2Nm8AZNov9YIf6NAjxdP/c="
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "bti-production-deployemnt",
+      "Export": {
+        "Name": "sls-bti-InfusionSoft-ZU-Ref-Token-dly-ServerlessDeploymentBucketName"
+      }
+    },
+    "AppLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "AppLambdaVersionR4jg9BLtYp4QTuJjbvtXpFJJrpdxlClvQSaP31Q"
+      },
+      "Export": {
+        "Name": "sls-bti-InfusionSoft-ZU-Ref-Token-dly-AppLambdaFunctionQualifiedArn"
+      }
+    }
+  }
+}

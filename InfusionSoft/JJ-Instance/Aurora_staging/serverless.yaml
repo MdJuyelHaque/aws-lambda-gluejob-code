@@ -1,0 +1,28 @@
+service: bti-InfusionSoft-JJ
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: Aurora-Staging-dly
+  iamRoleStatements:
+    # Allow to put files in the `bti-dl` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl"
+        - "arn:aws:s3:::bti-dl/*"
+functions:
+  app:
+    handler: app.handler
+    environment:
+      BUCKET: bti-dl
+      PUBLISH_FOLDER: 
+      PUBLISH_PREFIX: 
+      HOST: 
+      USER_NAME: 
+      PASSWORD: 
+      DB_NAME: 
+
+plugins:
+  - serverless-python-requirements

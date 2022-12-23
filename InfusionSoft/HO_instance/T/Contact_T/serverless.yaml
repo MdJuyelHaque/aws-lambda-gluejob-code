@@ -1,0 +1,28 @@
+service: bti-InfusionSoft-ho
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: T-new-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    # Allow to put files in the `bti-dl-ho` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl-ho"
+        - "arn:aws:s3:::bti-dl-ho/*"
+functions:
+  app:
+    handler: app.handler_ho
+    environment:
+      BUCKET: bti-dl-ho
+      STAGING_FOLDER: staging
+      PUBLISH_FOLDER: publish
+      PUBLISH_ARCHIVE_FOLDER: publish_archive
+      STAGING_PREFIX: bti_infusionSoft/staging/
+      PUBLISH_PREFIX: bti_infusionSoft/publish/
+plugins:
+  - serverless-python-requirements
+

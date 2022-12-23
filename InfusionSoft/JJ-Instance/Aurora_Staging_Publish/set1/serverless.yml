@@ -1,0 +1,47 @@
+service: bti-InfusionSoft-JJ-Aurora-Staging-Publish-Set1-dly-app
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+Glue:
+  bucketDeploy: bti-glue-job #bucketname 
+  tempDirBucket: s3://bti-glue-job #s3 bucket path
+  jobs:
+    - name: bti-InfusionSoft-JJ-Aurora-Staging-Publish-Set1-dly-app # Required
+      scriptPath: s3://bti-glue-job/bti-InfusionSoft-JJ-Aurora-Staging-Publish-Set1-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
+      type: pythonshell #spark / pythonshell # Required
+      glueVersion: python3-1.0 #python3-2.0 # Required python3-1.0 | python3-2.0 | python2-1.0 | python2-0.9 | scala2-1.0 | scala2-0.9 | scala2-2.0
+      role: arn:aws:iam::004181835165:role/bti-glue-aurora-publish-role #Required Role ARN
+      MaxConcurrentRuns: 3 # Optional
+      WorkerType: Standard # Optional  | Standard  | G1.X | G2.X
+      NumberOfWorkers: 1 # Optional
+      Connections: # Optional
+        - bti_publish_read_write 
+        - bti_staging_read_write 
+        - s3_access
+      DefaultArguments: # Optional
+        customArguments:
+         "--Aff_Mod_source_table": "bti_jj_staging.affiliateModel"
+         "--Camp_target_table": "bti_jj_publish.campaigns"
+         "--database": "bti_jj_staging"
+         "--Aff_source_table": "bti_jj_staging.affiliates"
+         "--Aff_Redi_target_table": "bti_jj_publish.affiliateRedirects"
+         "--job_name": "bti-InfusionSoft-JJ-Aurora-Staging-Publish-Set1-dly-app"
+         "--Acc_Pro_source_table": "bti_jj_staging.accountProfile"
+         "--Aff_Pro_target_table": "bti_jj_publish.affiliatePrograms"
+         "--Comp_target_table": "bti_jj_publish.companies"
+         "--Comp_source_table": "bti_jj_staging.companies"
+         "--Aff_Pro_source_table": "bti_jj_staging.affiliatePrograms"
+         "--python-modules-installer-option": "--no-index --find-links=http://bti-glue-job.s3-website-us-west-2.amazonaws.com/wheelhouse1 --trusted-host bti-glue-job.s3-website-us-west-2.amazonaws.com"
+         "--Aff_target_table": "bti_jj_publish.affiliates"
+         "--Acc_Pro_target_table": "bti_jj_publish.accountProfile"
+         "-Camp_source_table": "bti_jj_staging.campaigns"
+         "--Aff_Com_source_table": "bti_jj_staging.affiliateCommissions"
+         "--Aff_Redi_source_table": "bti_jj_staging.affiliateRedirects"
+         "--port": "3306"
+         "--Aff_Mod_target_table": "bti_jj_publish.affiliateModel"
+         "--Aff_Com_target_table": "bti_jj_publish.affiliateCommissions"
+          # Optional; these are user-specified custom default arguments that are passed into cloudformation with a leading -- (required for glue)
+plugins:
+  - serverless-glue
+  

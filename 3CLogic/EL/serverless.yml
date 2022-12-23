@@ -1,0 +1,33 @@
+service: bti
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: 3CLogic-EL-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl"
+        - "arn:aws:s3:::bti-dl/*"
+
+functions:
+  app:
+    handler: app.extract_load_3clogic
+    events:
+      - schedule: cron(0 08 ? * * *)
+    environment:
+      KEY: 
+      FTP_HOST: 
+      FTP_USER: 
+      FTP_PASSWORD: 
+      FTP_PATH: 
+      S3_BUCKET: 
+      S3_STAGING_FOLDER: 
+      S3_ARCHIVE_FOLDER: 
+
+plugins:
+  - serverless-python-requirements

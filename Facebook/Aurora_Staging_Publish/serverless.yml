@@ -1,0 +1,33 @@
+service: bti-Facebook-Aurora-Publish-dly-app
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+Glue:
+  bucketDeploy: bti-glue-job #bucketname 
+  tempDirBucket: s3://bti-glue-job #s3 bucket path
+  jobs:
+    - name: bti-Facebook-Aurora-Publish-dly-app # Required
+      scriptPath: s3://bti-glue-job/bti-Facebook-Aurora-Publish-dly-app.py # Required script will be named with the name after '/' and uploaded to s3Prefix location
+      type: pythonshell #spark / pythonshell # Required
+      glueVersion: python3-1.0 #python3-2.0 # Required python3-1.0 | python3-2.0 | python2-1.0 | python2-0.9 | scala2-1.0 | scala2-0.9 | scala2-2.0
+      role: arn:aws:iam::004181835165:role/bti-glue-aurora-publish-role #Required Role ARN
+      MaxConcurrentRuns: 3 # Optional
+      WorkerType: Standard # Optional  | Standard  | G1.X | G2.X
+      NumberOfWorkers: 1 # Optional
+      Connections: # Optional
+        - bti_publish_read_write 
+        - bti_staging_read_write 
+        - s3_access
+      DefaultArguments: # Optional
+        customArguments:
+         "--database": "bti_others_staging"
+         "--job_name": "bti-Facebook-Aurora-Publish-dly-app"
+         "--python-modules-installer-option": "--no-index --find-links=http://bti-glue-job.s3-website-us-west-2.amazonaws.com/wheelhouse1 --trusted-host bti-glue-job.s3-website-us-west-2.amazonaws.com"
+         "--port": "3306"
+         "--additional-python-modules": "mysql.connector"
+         "--Target_table": "bti_others_publish.bti_Facebook"
+         "--Source_table": "bti_others_staging.bti_Facebook" 
+          # Optional; these are user-specified custom default arguments that are passed into cloudformation with a leading -- (required for glue)
+plugins:
+  - serverless-glue

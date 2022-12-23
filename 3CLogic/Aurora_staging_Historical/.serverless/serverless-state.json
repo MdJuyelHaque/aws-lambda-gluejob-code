@@ -1,0 +1,231 @@
+{
+  "service": {
+    "service": "bti-3CLogic-Historical",
+    "serviceObject": {
+      "name": "bti-3CLogic-Historical"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.8",
+      "region": "us-west-2",
+      "stage": "Aurora-Staging-dly",
+      "deploymentBucket": "bti-production-deployemnt",
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:*"
+          ],
+          "Resource": [
+            "arn:aws:s3:::bti-dl",
+            "arn:aws:s3:::bti-dl/*"
+          ]
+        }
+      ],
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "AppLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/bti-3CLogic-Historical-Aurora-Staging-dly-app"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "bti-3CLogic-Historical",
+                        "Aurora-Staging-dly",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-3CLogic-Historical-Aurora-Staging-dly*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bti-3CLogic-Historical-Aurora-Staging-dly*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "bti-3CLogic-Historical",
+                    "Aurora-Staging-dly",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "AppLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "bti-production-deployemnt",
+                "S3Key": "serverless/bti-3CLogic-Historical/Aurora-Staging-dly/1637909899342-2021-11-26T06:58:19.342Z/bti-3CLogic-Historical.zip"
+              },
+              "Handler": "app.handler",
+              "Runtime": "python3.8",
+              "FunctionName": "bti-3CLogic-Historical-Aurora-Staging-dly-app",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "BUCKET": "bti-dl",
+                  "HISTORICAL_FOLDER": "Historical_Data_From_Teams/",
+                  "HOST": "bti-staging-1.c0vqzjmbxrqq.us-west-2.rds.amazonaws.com",
+                  "USER_NAME": "root",
+                  "PASSWORD": ")#RWvTYd3k",
+                  "DB_NAME": "bti_others_staging",
+                  "TABLE_NAME": "bti_historical_3clogic"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "AppLogGroup"
+            ]
+          },
+          "AppLambdaVersion9GeRsXx8Rm4tdwZL8skuZXUld3f9L5wTaqqvb70n0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AppLambdaFunction"
+              },
+              "CodeSha256": "doTqDbwNI3syevKInPsdj3CtKCrKu0Qr8OOn0cvxiS4="
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "bti-production-deployemnt",
+            "Export": {
+              "Name": "sls-bti-3CLogic-Historical-Aurora-Staging-dly-ServerlessDeploymentBucketName"
+            }
+          },
+          "AppLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AppLambdaVersion9GeRsXx8Rm4tdwZL8skuZXUld3f9L5wTaqqvb70n0"
+            },
+            "Export": {
+              "Name": "sls-bti-3CLogic-Historical-Aurora-Staging-dly-AppLambdaFunctionQualifiedArn"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "plugins": [
+      "serverless-python-requirements"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "app": {
+        "handler": "app.handler",
+        "environment": {
+          "BUCKET": "bti-dl",
+          "HISTORICAL_FOLDER": "Historical_Data_From_Teams/",
+          "HOST": "bti-staging-1.c0vqzjmbxrqq.us-west-2.rds.amazonaws.com",
+          "USER_NAME": "root",
+          "PASSWORD": ")#RWvTYd3k",
+          "DB_NAME": "bti_others_staging",
+          "TABLE_NAME": "bti_historical_3clogic"
+        },
+        "events": [],
+        "name": "bti-3CLogic-Historical-Aurora-Staging-dly-app",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.8",
+        "vpc": {},
+        "versionLogicalId": "AppLambdaVersion9GeRsXx8Rm4tdwZL8skuZXUld3f9L5wTaqqvb70n0"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yaml",
+    "initialServerlessConfig": {
+      "service": {
+        "$ref": "$[\"service\"][\"serviceObject\"]"
+      },
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "plugins": {
+        "$ref": "$[\"service\"][\"plugins\"]"
+      }
+    },
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
+    "artifact": "/home/isita/current_Deployed_Lambda/3cLogic/Aurora_staging_Historical/.serverless/bti-3CLogic-Historical.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/bti-3CLogic-Historical/Aurora-Staging-dly/1637909899342-2021-11-26T06:58:19.342Z",
+    "artifact": "bti-3CLogic-Historical.zip"
+  }
+}

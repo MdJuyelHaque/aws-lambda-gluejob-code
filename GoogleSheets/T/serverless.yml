@@ -1,0 +1,29 @@
+service: bti
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: GoogleSheets-T-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl"
+        - "arn:aws:s3:::bti-dl/*"
+functions:
+  app:
+    handler: app.staging_to_publish
+    events:
+      - schedule: cron(20 08 ? * * *)
+    environment:
+      S3_BUCKET: 
+      STAGING_FOLDER: 
+      PUBLISH_FOLDER: 
+      S3_STAGING_FOLDER: 
+      S3_PUBLISH_FOLDER: 
+      S3_PUBLISH_ARCHIVE_FOLDER: 
+      
+plugins:
+  - serverless-python-requirements

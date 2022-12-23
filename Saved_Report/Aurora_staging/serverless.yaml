@@ -1,0 +1,30 @@
+service: bti-SavedReport-JJ
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: Aurora-Staging-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    # Allow to put files in the `bti-dl` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        
+functions:
+  app:
+    handler: app.handler
+    events:
+      - schedule: cron(40 08 ? * * *)
+    environment:
+      BUCKET: 
+      PUBLISH_FOLDER: 
+      PUBLISH_PREFIX: 
+      HOST: 
+      USER_NAME: 
+      PASSWORD: 
+      DB_NAME: 
+
+plugins:
+  - serverless-python-requirements

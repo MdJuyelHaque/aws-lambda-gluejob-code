@@ -1,0 +1,16 @@
+service: bti-3CLogic
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: glue_trigger-dly-app
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+functions:
+  app:
+    handler: app.lambda_handler
+    environment:
+      Gluejobname: bti-3CLogic-Aurora-Publish-dly-app
+plugins:
+  - serverless-python-requirements
+

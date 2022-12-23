@@ -1,0 +1,49 @@
+service: bti-InfusionSoft-HO
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  stage: EL-Set1-dly
+  deploymentBucket: bti-production-deployemnt
+  iamRoleStatements:
+    # Allow to list, get and put and a file in the `conf-token` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::conf-token/*"
+    # Allow to put files in the `bti-dl-ho` S3 bucket
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "arn:aws:s3:::bti-dl-ho"
+        - "arn:aws:s3:::bti-dl-ho/*"
+    # Allow to scan and get the `bti_job_config_InfusionSoft_IS1` DynamoDB table
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource: "arn:aws:dynamodb:us-west-2:004181835165:table/bti_job_config_InfusionSoft_IS1"
+    # Allow to scan, get, put and update the `bti_job_history_InfusionSoft_IS1` DynamoDB table
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:us-west-2:004181835165:table/bti_job_history_InfusionSoft_IS1"
+functions:
+  app:
+    handler: app.extract_load_infusionSoft_ho
+    environment:
+      aws_url: 
+      groupId: 1
+      bucket: 
+      encryption_secret_key: 
+      client_id: 
+      client_secret: 
+      host: 
+
+plugins:
+  - serverless-python-requirements
