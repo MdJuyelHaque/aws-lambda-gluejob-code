@@ -1,4 +1,4 @@
-#Author: Angsul Sadhukhan
+
 import boto3
 import logging
 import sys
