@@ -18,7 +18,7 @@ provider:
       Action:
         - dynamodb:Scan
         - dynamodb:GetItem
-      Resource: "arn:aws:dynamodb:us-west-2:004181835165:table/bti_config_google_sheets"
+      Resource: "arn:aws:dynamodb:us-west-2::table/bti_config_google_sheets"
 functions:
   app:
     handler: app.extraction_load_google_sheets
