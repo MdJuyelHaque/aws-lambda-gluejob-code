@@ -24,7 +24,7 @@ provider:
       Action:
         - dynamodb:Scan
         - dynamodb:GetItem
-      Resource: "arn:aws:dynamodb:us-west-2:004181835165:table/bti_job_config_InfusionSoft_IS3"
+      Resource: "arn:aws:dynamodb:us-west-2::table/bti_job_config_InfusionSoft_IS3"
     # Allow to scan, get, put and update the `bti_job_history_InfusionSoft_IS3` DynamoDB table
     - Effect: Allow
       Action:
@@ -32,7 +32,7 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
-      Resource: "arn:aws:dynamodb:us-west-2:004181835165:table/bti_job_history_InfusionSoft_IS3"
+      Resource: "arn:aws:dynamodb:us-west-2::table/bti_job_history_InfusionSoft_IS3"
 functions:
   app:
     handler: app.extract_load_infusionSoft_zu
