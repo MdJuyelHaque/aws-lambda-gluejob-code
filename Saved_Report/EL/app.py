@@ -1,4 +1,3 @@
-#author Angsul Sadhukhan
 import gzip
 from json import encoder
 import os
