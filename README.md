@@ -1,7 +1,8 @@
-# aws-lambda-gluejob-code
-### Heading 3 ###
-
-1. A numbered list
-   a. A nested numbered list
-   b. Which is numbered
-          c. Which is numbered
+1. Item 1
+2. Item 2
+3. Item 3
+   * Sub item 1
+   * Sub item 3
+* Unordered item
+* Unordered item
+* Unordered item
